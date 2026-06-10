@@ -83,7 +83,6 @@ VARIANT_DATA: dict[str, dict[str, list]] = {
             V('Turbo',               4,  80_000, 162_000, 'early'),
             V('Turbo S',             2, 150_000, 300_000, 'early'),
             V('Speedster',           2, 150_000, 350_000, 'manual'),
-            V('GTS',                 3,  68_000, 138_000, 'very_early'),
         ],
         '993': [
             V('Carrera',             7,  52_000, 102_000, 'very_early'),
@@ -92,11 +91,10 @@ VARIANT_DATA: dict[str, dict[str, list]] = {
             V('Turbo',               4,  90_000, 182_000, 'early'),
             V('Turbo S',             2, 150_000, 350_000, 'early'),
             V('GT2',                 1, 400_000, 900_000, 'manual'),
-            V('Speedster',           2, 200_000, 450_000, 'manual'),
-            V('GTS',                 3,  80_000, 152_000, 'very_early'),
         ],
         '996.1': [
             V('Carrera',             8,  24_000,  52_000, 'early'),
+            V('Carrera S',           5,  30_000,  60_000, 'early'),
             V('Turbo',               4,  58_000, 122_000, 'early'),
             V('GT3',                 3,  80_000, 180_000, 'manual'),
         ],
@@ -214,6 +212,22 @@ VARIANT_DATA: dict[str, dict[str, list]] = {
             V('RS Spyder', 1, 100_000, 182_000, 'manual'),
         ],
     },
+    '959': {
+        '959': [
+            V('base', 1, 1_200_000, 1_800_000, 'manual', 8),
+        ],
+    },
+    'Carrera GT': {
+        'Carrera GT': [
+            V('base', 1, 800_000, 1_400_000, 'manual', 8),
+        ],
+    },
+    '918 Spyder': {
+        '918 Spyder': [
+            V('base',             1, 1_400_000, 2_200_000, 'pdk', 5),
+            V('Weissach Package', 1, 1_600_000, 2_200_000, 'pdk', 3),
+        ],
+    },
 }
 
 # Generation selection weights (higher = more records)
@@ -223,11 +237,14 @@ GEN_WEIGHTS = {
         '964': 9, '993': 10, '996.1': 6, '996.2': 8,
         '997.1': 12, '997.2': 13, '991.1': 13, '991.2': 14, '992': 15,
     },
-    'Cayman':  {'987': 8,  '981': 10, '718': 12},
-    'Boxster': {'986': 5,  '987': 7,  '981': 8,  '718': 10},
+    'Cayman':     {'987': 8,  '981': 10, '718': 12},
+    'Boxster':    {'986': 5,  '987': 7,  '981': 8,  '718': 10},
+    '959':        {'959': 1},
+    'Carrera GT': {'Carrera GT': 1},
+    '918 Spyder': {'918 Spyder': 1},
 }
 
-MODEL_WEIGHTS = {'911': 55, 'Cayman': 28, 'Boxster': 17}
+MODEL_WEIGHTS = {'911': 55, 'Cayman': 28, 'Boxster': 17, '959': 5, 'Carrera GT': 5, '918 Spyder': 5}
 
 YEAR_RANGES = {
     'F-Series': (1964, 1973), 'G-Series': (1974, 1989),
@@ -237,6 +254,9 @@ YEAR_RANGES = {
     '991.1': (2012, 2016), '991.2': (2016, 2019), '992': (2019, 2024),
     '986':   (1997, 2004), '987':   (2005, 2012),
     '981':   (2012, 2016), '718':   (2016, 2024),
+    '959':        (1986, 1988),
+    'Carrera GT': (2004, 2006),
+    '918 Spyder': (2013, 2015),
 }
 
 MILEAGE_RANGES = {
@@ -247,6 +267,9 @@ MILEAGE_RANGES = {
     '991.1': ( 4_000,  58_000), '991.2': ( 2_000,  46_000), '992': (400, 28_000),
     '986':   (25_000, 135_000), '987':   (18_000,  95_000),
     '981':   ( 8_000,  65_000), '718':   ( 2_000,  38_000),
+    '959':        (10_000, 50_000),
+    'Carrera GT': ( 2_000, 15_000),
+    '918 Spyder': (   500,  8_000),
 }
 
 COLORS = [
@@ -346,10 +369,11 @@ async def seed(n: int = 350):
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
 
-    async with AsyncSession() as session:
-        await session.execute(delete(AuctionResult))
-        await session.commit()
-    print('Cleared existing auction_results.')
+    if '--clear' in sys.argv:
+        async with AsyncSession() as session:
+            await session.execute(delete(AuctionResult))
+            await session.commit()
+        print('Cleared existing auction_results.')
 
     counts:  dict = {}
     records: list = []

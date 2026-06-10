@@ -45,13 +45,13 @@ export const VARIANTS = {
     ],
     '964': [
       'Carrera', 'Carrera RS', 'Carrera RS America',
-      'Turbo', 'Turbo S', 'Speedster', 'GTS',
+      'Turbo', 'Turbo S', 'Speedster',
     ],
     '993': [
       'Carrera', 'Carrera S', 'Carrera RS',
-      'Turbo', 'Turbo S', 'GT2', 'Speedster', 'GTS',
+      'Turbo', 'Turbo S', 'GT2',
     ],
-    '996.1': ['Carrera', 'Turbo', 'GT3'],
+    '996.1': ['Carrera', 'Carrera S', 'Turbo', 'GT3'],
     '996.2': ['Carrera', 'Carrera S', 'Turbo', 'Turbo S', 'GT3', 'GT3 RS', 'GT2'],
     '997.1': [
       'Carrera', 'Carrera S',
