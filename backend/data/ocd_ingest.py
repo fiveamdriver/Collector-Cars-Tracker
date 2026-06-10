@@ -84,31 +84,33 @@ def extract_variant(listing_model: str | None) -> str:
 
 # ── Model line lookup ────────────────────────────────────────────────────────
 
-def get_model_line(ocd_model: str, listing_model: str | None) -> str:
-    if ocd_model in ("911", "964", "993", "996", "997", "991", "992"):
-        return "911"
-    if ocd_model == "Boxster":   return "Boxster"
-    if ocd_model == "Cayman":    return "Cayman"
-    if ocd_model == "718":
+def get_model_line(ocd_model_name: str, listing_model: str | None) -> str:
+    if ocd_model_name == "959":        return "959"
+    if ocd_model_name == "Carrera GT": return "Carrera GT"
+    if ocd_model_name == "918 Spyder": return "918 Spyder"
+    if ocd_model_name == "Boxster":    return "Boxster"
+    if ocd_model_name == "Cayman":     return "Cayman"
+    if ocd_model_name == "718":
         lm = (listing_model or "").lower()
         return "Cayman" if "cayman" in lm else "Boxster"
-    if ocd_model == "Carrera GT": return "Carrera GT"
-    if ocd_model == "918 Spyder": return "918 Spyder"
-    if ocd_model == "959":        return "959"
-    return "911"
+    return "911"  # "911", "964", "993", "996", "997", "991", "992"
 
 
 # ── API fetch ────────────────────────────────────────────────────────────────
 
-def fetch_ocd(make: str, model: str, status: str = "sold", limit: int = 20) -> list[dict]:
+def fetch_ocd(make: str, model: str, status: str = "sold", limit: int = 20,
+              keyword: str | None = None) -> list[dict]:
     if not API_KEY:
         raise RuntimeError("OCD_API_KEY environment variable is not set")
-    params = urllib.parse.urlencode({
+    raw_params: dict = {
         "make":   make,
         "model":  model,
         "status": status,
         "limit":  limit,
-    })
+    }
+    if keyword is not None:
+        raw_params["keyword"] = keyword
+    params = urllib.parse.urlencode(raw_params)
     url = f"{API_BASE}/auctions?{params}"
     req = urllib.request.Request(url, headers={
         "Accept":        "application/json",
@@ -142,11 +144,11 @@ def map_record(raw: dict) -> dict | None:
         return None
     year = int(year)
 
-    ocd_model     = str(raw.get("model") or "")
-    listing_model = str(raw.get("listing_model") or raw.get("model_trim") or "")
+    ocd_model_name = str(raw.get("ocd_model_name") or "")
+    listing_model  = str(raw.get("listing_model") or raw.get("model_trim") or "")
 
-    model_line   = get_model_line(ocd_model, listing_model)
-    generation   = get_911_generation(year) if model_line == "911" else ocd_model
+    model_line   = get_model_line(ocd_model_name, listing_model)
+    generation   = get_911_generation(year) if model_line == "911" else ocd_model_name
     variant      = extract_variant(listing_model)
     transmission = normalize_transmission(
         raw.get("transmission") or raw.get("gearbox")
@@ -182,9 +184,11 @@ def map_record(raw: dict) -> dict | None:
 # ── Queries to run ───────────────────────────────────────────────────────────
 
 QUERIES = [
-    dict(make="Porsche", model="997", status="sold", limit=20),
-    dict(make="Porsche", model="993", status="sold", limit=20),
-    dict(make="Porsche", model="964", status="sold", limit=20),
+    dict(make="Porsche", model="959",        limit=20),
+    dict(make="Porsche", model="Carrera GT", limit=20),
+    dict(make="Porsche", model="997",        keyword="RS 4.0", limit=20),
+    dict(make="Porsche", model="992",        keyword="S/T",    limit=20),
+    dict(make="Porsche", model="991",        keyword=" R ",    limit=20),
 ]
 
 
@@ -216,6 +220,8 @@ async def ingest() -> None:
             continue
 
         total_fetched += len(raw_list)
+        if raw_list:
+            print(f"  ocd_model_name (first record): {raw_list[0].get('ocd_model_name')!r}")
         batch_inserted = batch_skipped = 0
 
         for raw in raw_list:
