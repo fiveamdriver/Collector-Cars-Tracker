@@ -17,6 +17,7 @@ class AuctionResult(Base):
     variant: Mapped[str]
     year: Mapped[int]
     transmission: Mapped[str]
+    is_widebody: Mapped[Optional[bool]]
     mileage: Mapped[Optional[int]]
     color: Mapped[Optional[str]]
     sold_price: Mapped[int]
