@@ -1,13 +1,13 @@
 import { BrowserRouter, Navigate, Route, Routes, useParams } from 'react-router-dom'
-import { ALL_MODELS } from './data/taxonomy'
+import { ALL_MODELS, GENERATION_GROUPS } from './data/taxonomy'
 import Layout from './components/Layout'
 import MarketHome from './pages/MarketHome'
 import GenerationIndex from './pages/GenerationIndex'
+import SubGenerationIndex from './pages/SubGenerationIndex'
 import VariantIndex from './pages/VariantIndex'
 import MarketDetail from './pages/MarketDetail'
 import './App.css'
 
-// /:modelSlug — routes to GenerationIndex for series models, MarketDetail for standalone
 function ModelRouter() {
   const { modelSlug } = useParams()
   const model = ALL_MODELS.find(m => m.slug === modelSlug)
@@ -15,15 +15,34 @@ function ModelRouter() {
   return model.type === 'standalone' ? <MarketDetail /> : <GenerationIndex />
 }
 
+// /:modelSlug/:seg1 — group slug (997) → SubGenerationIndex; flat gen (964) → VariantIndex
+function Seg1Router() {
+  const { modelSlug, seg1 } = useParams()
+  const model = ALL_MODELS.find(m => m.slug === modelSlug)
+  if (!model) return <Navigate to="/" replace />
+  const groups = GENERATION_GROUPS[modelSlug] ?? {}
+  return seg1 in groups ? <SubGenerationIndex /> : <VariantIndex />
+}
+
+// /:modelSlug/:seg1/:seg2 — group+subgen (997/997.1) → VariantIndex; gen+variant (964/carrera) → MarketDetail
+function Seg2Router() {
+  const { modelSlug, seg1, seg2 } = useParams()
+  const model = ALL_MODELS.find(m => m.slug === modelSlug)
+  if (!model) return <Navigate to="/" replace />
+  const groups = GENERATION_GROUPS[modelSlug] ?? {}
+  return groups[seg1]?.includes(seg2) ? <VariantIndex /> : <MarketDetail />
+}
+
 export default function App() {
   return (
     <BrowserRouter>
       <Layout>
         <Routes>
-          <Route path="/"                                    element={<MarketHome />} />
-          <Route path="/:modelSlug"                          element={<ModelRouter />} />
-          <Route path="/:modelSlug/:generation"              element={<VariantIndex />} />
-          <Route path="/:modelSlug/:generation/:variantSlug" element={<MarketDetail />} />
+          <Route path="/"                                element={<MarketHome />} />
+          <Route path="/:modelSlug"                      element={<ModelRouter />} />
+          <Route path="/:modelSlug/:seg1"                element={<Seg1Router />} />
+          <Route path="/:modelSlug/:seg1/:seg2"          element={<Seg2Router />} />
+          <Route path="/:modelSlug/:seg1/:seg2/:seg3"    element={<MarketDetail />} />
         </Routes>
       </Layout>
     </BrowserRouter>

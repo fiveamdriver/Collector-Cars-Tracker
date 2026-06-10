@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useParams, Navigate } from 'react-router-dom'
-import { ALL_MODELS, MODEL_LINE, VARIANTS } from '../data/taxonomy'
+import { ALL_MODELS, GENERATION_GROUPS, MODEL_LINE, VARIANTS } from '../data/taxonomy'
 import { fetchAuctionResults } from '../api/client'
 import { calcStats, groupByMonth } from '../utils/aggregation'
 import { fromSlug } from '../utils/slugs'
@@ -10,11 +10,26 @@ import PriceHistoryChart from '../components/PriceHistoryChart'
 import ResultsTable from '../components/ResultsTable'
 
 export default function MarketDetail() {
-  const { modelSlug, generation, variantSlug } = useParams()
+  const { modelSlug, seg1, seg2, seg3 } = useParams()
   const model     = ALL_MODELS.find(m => m.slug === modelSlug)
   const modelLine = MODEL_LINE[modelSlug]
+  const groups    = GENERATION_GROUPS[modelSlug] ?? {}
+
+  // Derive generation, variant slug, and group from URL shape
+  let groupSlug, generation, variantSlug
+  if (!seg1) {
+    // standalone: /:modelSlug
+    groupSlug = null; generation = null; variantSlug = null
+  } else if (seg3) {
+    // grouped 4-segment: /:model/:group/:subgen/:variant
+    groupSlug = seg1; generation = seg2; variantSlug = seg3
+  } else {
+    // flat 3-segment: /:model/:gen/:variant
+    groupSlug = null; generation = seg1; variantSlug = seg2
+  }
+
   const candidates = VARIANTS[modelSlug]?.[generation] ?? []
-  const variant   = variantSlug ? fromSlug(variantSlug, candidates) : null
+  const variant    = variantSlug ? fromSlug(variantSlug, candidates) : null
 
   const [results, setResults] = useState([])
   const [loading, setLoading] = useState(true)
@@ -32,16 +47,18 @@ export default function MarketDetail() {
       .finally(() => setLoading(false))
   }, [modelLine, generation, variant])
 
-  const stats       = useMemo(() => calcStats(results),      [results])
-  const monthlyData = useMemo(() => groupByMonth(results),   [results])
+  const stats       = useMemo(() => calcStats(results),    [results])
+  const monthlyData = useMemo(() => groupByMonth(results), [results])
 
   if (!model) return <Navigate to="/" replace />
 
-  // Build breadcrumbs depending on how deep the URL is
   const crumbs = [{ label: 'Markets', to: '/' }]
   if (model.type === 'series') {
     crumbs.push({ label: model.label, to: `/${modelSlug}` })
-    if (generation) crumbs.push({ label: generation, to: `/${modelSlug}/${generation}` })
+    if (groupSlug)  crumbs.push({ label: groupSlug,  to: `/${modelSlug}/${groupSlug}` })
+    if (generation) crumbs.push({ label: generation, to: groupSlug
+      ? `/${modelSlug}/${groupSlug}/${generation}`
+      : `/${modelSlug}/${generation}` })
     if (variant)    crumbs.push({ label: variant })
   } else {
     crumbs.push({ label: model.label })

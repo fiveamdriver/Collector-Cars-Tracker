@@ -17,8 +17,18 @@ export const ALL_MODELS = [
   { slug: '918-spyder', label: '918 Spyder', type: 'standalone' },
 ]
 
+// Groups that have sub-generations; keyed by the group URL slug
+export const GENERATION_GROUPS = {
+  '911': {
+    '996': ['996.1', '996.2'],
+    '997': ['997.1', '997.2'],
+    '991': ['991.1', '991.2'],
+  },
+}
+
+// Top-level generation list shown on GenerationIndex (groups collapsed to one entry)
 export const GENERATIONS = {
-  '911':    ['F-Series', 'G-Series', '964', '993', '996.1', '996.2', '997.1', '997.2', '991.1', '991.2', '992'],
+  '911':    ['F-Series', 'G-Series', '964', '993', '996', '997', '991', '992'],
   'cayman': ['987', '981', '718'],
   'boxster': ['986', '987', '981', '718'],
 }
