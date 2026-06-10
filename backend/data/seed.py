@@ -71,7 +71,7 @@ VARIANT_DATA: dict[str, dict[str, list]] = {
             V('SC',                   6,  35_000,   80_000, 'manual', None, 1978, 1983),
             V('Carrera 3.2',          7,  50_000,  120_000, 'manual', None, 1984, 1989),
             V('Turbo 3.0',            3, 120_000,  250_000, 'manual', None, 1975, 1977),
-            V('Turbo 3.3',            5, 100_000,  280_000, 'manual', None, 1978, 1989),
+            V('930 Turbo',            5, 100_000,  280_000, 'manual', None, 1978, 1989),
             V('Turbo 3.3 Slant Nose', 2, 200_000,  500_000, 'manual',    3, 1987, 1989),
             V('Turbo S',              1, 250_000,  600_000, 'manual',    2, 1980, 1980),
             V('Speedster',            2, 150_000,  350_000, 'manual',    4, 1989, 1989),

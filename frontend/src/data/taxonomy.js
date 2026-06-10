@@ -41,7 +41,7 @@ export const VARIANTS = {
     ],
     'G-Series': [
       'Carrera 2.7', '911S', 'Carrera RS 3.0', 'SC', 'Carrera 3.2',
-      'Turbo 3.0', 'Turbo 3.3', 'Turbo 3.3 Slant Nose', 'Turbo S', 'Speedster',
+      'Turbo 3.0', '930 Turbo', 'Turbo 3.3 Slant Nose', 'Turbo S', 'Speedster',
     ],
     '964': [
       'Carrera', 'Carrera RS', 'Carrera RS America',

@@ -40,7 +40,7 @@ MAX_PAGES = None  # set to an integer to limit pages per config during test runs
 # ── Query configs ─────────────────────────────────────────────────────────────
 
 CONFIGS = [
-    {"name": "911 GT3/GT3 RS",    "ids": [2015688, 55778434, 55778221, 55778351], "model_line": "911",        "variant": "GT3"},
+    {"name": "911 GT3/GT3 RS",    "ids": [2015688, 55778434, 55778221, 55778351], "model_line": "911",        "variant": None},
     {"name": "993",               "ids": [1833039],                               "model_line": "911",        "variant": None},
     {"name": "964",               "ids": [1833038],                               "model_line": "911",        "variant": None},
     {"name": "964 Carrera RS",    "ids": [74679063],                              "model_line": "911",        "variant": "Carrera RS"},
