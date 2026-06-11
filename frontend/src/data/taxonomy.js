@@ -44,7 +44,7 @@ export const VARIANTS = {
       'Turbo 3.0', '930 Turbo', 'Turbo 3.3 Slant Nose', 'Turbo S', 'Speedster',
     ],
     '964': [
-      'Carrera', 'Carrera RS', 'Carrera RS America',
+      'Carrera', 'Carrera RS', 'RS America',
       'Turbo', 'Turbo S', 'Speedster',
     ],
     '993': [

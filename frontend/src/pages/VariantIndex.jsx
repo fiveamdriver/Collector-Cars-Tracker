@@ -28,7 +28,7 @@ export default function VariantIndex() {
   useEffect(() => {
     setLoading(true)
     setError(null)
-    fetchAuctionResults({ model_line: modelLine, generation })
+    fetchAuctionResults({ model_line: modelLine, generation, limit: 10000 })
       .then(setResults)
       .catch(e => setError(e.message))
       .finally(() => setLoading(false))

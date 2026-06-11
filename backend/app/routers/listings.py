@@ -1,6 +1,6 @@
 from typing import Optional
 
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -25,6 +25,7 @@ async def list_auction_results(
     generation: Optional[str] = None,
     variant: Optional[str] = None,
     transmission: Optional[str] = None,
+    limit: int = Query(default=500, le=10000),
     db: AsyncSession = Depends(get_db),
 ):
     q = select(AuctionResult)
@@ -38,6 +39,7 @@ async def list_auction_results(
         q = q.where(AuctionResult.variant == variant)
     if transmission:
         q = q.where(AuctionResult.transmission == transmission)
+    q = q.limit(limit)
     result = await db.execute(q)
     return result.scalars().all()
 

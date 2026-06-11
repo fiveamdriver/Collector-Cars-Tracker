@@ -5,6 +5,13 @@ import { fetchAuctionResults } from '../api/client'
 import { calcStats, groupByField } from '../utils/aggregation'
 import porscheCrest from '../assets/Porsche_Symbol_1.png'
 
+const MODEL_IMAGES = {
+  '911':        '/images/993.jpg',
+  '959':        '/images/959.jpg',
+  'carrera-gt': '/images/carrera gt.jpeg',
+  '918-spyder': '/images/918.jpeg',
+}
+
 export default function MarketHome() {
   const series     = ALL_MODELS.filter(m => m.type === 'series')
   const standalone = ALL_MODELS.filter(m => m.type === 'standalone')
@@ -50,6 +57,10 @@ export default function MarketHome() {
             const s = modelStats[m.slug]
             return (
               <Link key={m.slug} to={`/${m.slug}`} className="model-card">
+                {/* images temporarily hidden — re-enable by uncommenting:
+                MODEL_IMAGES[m.slug] && (
+                  <img src={MODEL_IMAGES[m.slug]} alt={m.label} className="model-card-thumb" />
+                ) */}
                 <span className="model-card-name">{m.label}</span>
                 {s?.count > 0 && (
                   <>
@@ -70,6 +81,10 @@ export default function MarketHome() {
             const s = modelStats[m.slug]
             return (
               <Link key={m.slug} to={`/${m.slug}`} className="model-card">
+                {/* images temporarily hidden — re-enable by uncommenting:
+                MODEL_IMAGES[m.slug] && (
+                  <img src={MODEL_IMAGES[m.slug]} alt={m.label} className="model-card-thumb" />
+                ) */}
                 <span className="model-card-name">{m.label}</span>
                 {s?.count > 0 && (
                   <>

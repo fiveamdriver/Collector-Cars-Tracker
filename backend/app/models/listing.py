@@ -12,9 +12,9 @@ class AuctionResult(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True)
     make: Mapped[str]
-    model_line: Mapped[str]
-    generation: Mapped[str]
-    variant: Mapped[str]
+    model_line: Mapped[str] = mapped_column(index=True)
+    generation: Mapped[str] = mapped_column(index=True)
+    variant: Mapped[str] = mapped_column(index=True)
     year: Mapped[int]
     transmission: Mapped[str]
     is_widebody: Mapped[Optional[bool]]
@@ -23,8 +23,9 @@ class AuctionResult(Base):
     sold_price: Mapped[int]
     auction_source: Mapped[str]
     auction_url: Mapped[Optional[str]]
-    sold_date: Mapped[date]
+    sold_date: Mapped[date] = mapped_column(index=True)
     lot_title: Mapped[Optional[str]]
+    exterior_color: Mapped[Optional[str]]
     paint_to_sample: Mapped[Optional[bool]]
     production_number: Mapped[Optional[str]]
     created_at: Mapped[datetime] = mapped_column(default=func.now())

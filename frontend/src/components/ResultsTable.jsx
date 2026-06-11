@@ -1,3 +1,5 @@
+import { useState } from 'react'
+
 function fmtPrice(n) {
   return n != null ? `$${n.toLocaleString()}` : '—'
 }
@@ -14,8 +16,14 @@ function stripYear(s, stripMileage) {
     out = out.replace(/(?:No Reserve:\s+)?[\d,k]+-(?:Mile|Kilometer)\s*/i, '').trim()
   return out
 }
+function stripColor(s, color) {
+  if (!s || !color) return s
+  return s.replace(new RegExp('^' + color.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\s*', 'i'), '').trim()
+}
 
 export default function ResultsTable({ results }) {
+  const [lightbox, setLightbox] = useState(null)
+
   const sorted = [...results].sort(
     (a, b) => new Date(b.sold_date) - new Date(a.sold_date)
   )
@@ -23,6 +31,7 @@ export default function ResultsTable({ results }) {
   const showTrans = !results.every(r => r.transmission === results[0]?.transmission)
 
   return (
+    <>
     <div className="table-wrapper">
       <table>
         <thead>
@@ -32,6 +41,7 @@ export default function ResultsTable({ results }) {
             <th>Listing</th>
             {showTrans && <th>Trans</th>}
             <th>Photo</th>
+            <th>Color</th>
             <th>Mileage</th>
             <th>Sold Price</th>
             <th>Source</th>
@@ -42,13 +52,14 @@ export default function ResultsTable({ results }) {
             <tr key={r.id} className={i % 2 === 1 ? 'row-alt' : ''}>
               <td>{r.sold_date}</td>
               <td>{r.year}</td>
-              <td className="td-listing">{truncate(stripYear(r.lot_title, r.mileage != null), 40)}</td>
+              <td className="td-listing">{truncate(stripColor(stripYear(r.lot_title, r.mileage != null), r.exterior_color), 40)}</td>
               {showTrans && <td className="td-trans">{r.transmission}</td>}
               <td className="td-photo">
                 {r.thumbnail_url
-                  ? <img src={r.thumbnail_url} alt="" className="result-thumb" />
+                  ? <img src={r.thumbnail_url} alt="" className="result-thumb result-thumb--clickable" onClick={() => setLightbox(r.thumbnail_url)} />
                   : '—'}
               </td>
+              <td className="td-color">{r.exterior_color ?? '—'}</td>
               <td>{fmtMileage(r.mileage)}</td>
               <td className="price-cell">{fmtPrice(r.sold_price)}</td>
               <td className="source-cell">
@@ -61,5 +72,12 @@ export default function ResultsTable({ results }) {
         </tbody>
       </table>
     </div>
+
+    {lightbox && (
+      <div className="lightbox-overlay" onClick={() => setLightbox(null)}>
+        <img src={lightbox} alt="" className="lightbox-img" />
+      </div>
+    )}
+    </>
   )
 }

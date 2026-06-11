@@ -18,6 +18,7 @@ class AuctionResultCreate(BaseModel):
     auction_url: Optional[str] = None
     sold_date: date
     lot_title: Optional[str] = None
+    exterior_color: Optional[str] = None
     paint_to_sample: Optional[bool] = None
     production_number: Optional[str] = None
 

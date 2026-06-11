@@ -25,6 +25,7 @@ sys.path.insert(0, BACKEND_DIR)
 import app.models  # noqa: F401
 from app.database import Base
 from app.models.listing import AuctionResult
+from app.utils.color_parser import parse_exterior_color
 from sqlalchemy import select, update
 from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
 
@@ -41,18 +42,27 @@ MAX_PAGES = None  # set to an integer to limit pages per config during test runs
 
 CONFIGS = [
     {"name": "911 GT3/GT3 RS",    "ids": [2015688, 55778434, 55778221, 55778351], "model_line": "911",        "variant": None},
-    {"name": "993",               "ids": [1833039],                               "model_line": "911",        "variant": None},
-    {"name": "964",               "ids": [1833038],                               "model_line": "911",        "variant": None},
+    {"name": "993 Carrera",       "ids": [1833039],                               "model_line": "911",        "variant": "Carrera"},
+    {"name": "993 Carrera 4",     "ids": [113028272],                             "model_line": "911",        "variant": "Carrera 4"},
+    {"name": "993 Carrera 4S",    "ids": [113028394],                             "model_line": "911",        "variant": "Carrera 4S"},
+    {"name": "993 Carrera S",     "ids": [113028363],                             "model_line": "911",        "variant": "Carrera S"},
+    {"name": "993 Carrera RS",    "ids": [113029626],                             "model_line": "911",        "variant": "Carrera RS"},
+    {"name": "993 Turbo",         "ids": [1833044],                               "model_line": "911",        "variant": "Turbo"},
+    {"name": "993 GT2",           "ids": [55777633],                              "model_line": "911",        "variant": "GT2"},
+    {"name": "964",               "ids": [1833038],                               "model_line": "911",        "variant": "Carrera 2"},
     {"name": "964 Carrera RS",    "ids": [74679063],                              "model_line": "911",        "variant": "Carrera RS"},
+    {"name": "964 RS America",    "ids": [13042525],                              "model_line": "911",        "variant": "RS America"},
+    {"name": "964 Turbo",         "ids": [1833043],                               "model_line": "911",        "variant": "Turbo"},
+    {"name": "964 Speedster",     "ids": [107034406],                             "model_line": "911",        "variant": "Speedster"},
+    {"name": "964 Singer",        "ids": [49009648],                              "model_line": "911",        "variant": "Singer"},
     {"name": "Carrera GT",        "ids": [38349021],                              "model_line": "Carrera GT", "variant": "base"},
     {"name": "959",               "ids": [39491899],                              "model_line": "959",        "variant": "base"},
     {"name": "918 Spyder",        "ids": [38553278],                              "model_line": "918 Spyder", "variant": None},
     {"name": "991 R",             "ids": [107021997],                             "model_line": "911",        "variant": "R"},
     {"name": "992 S/T",           "ids": [106842163],                             "model_line": "911",        "variant": "S/T"},
-    {"name": "993 GT2",           "ids": [55777633],                              "model_line": "911",        "variant": "GT2"},
     {"name": "997 Sport Classic", "ids": [107031857],                             "model_line": "911",        "variant": "Sport Classic"},
     {"name": "991 Speedster",     "ids": [107022050],                             "model_line": "911",        "variant": "Speedster"},
-    {"name": "930 Turbo",         "ids": [1833042],                               "model_line": "911",        "variant": "Turbo 3.3"},
+    {"name": "930 Turbo",         "ids": [1833042],                               "model_line": "911",        "variant": "930 Turbo"},
     {"name": "996 Turbo",         "ids": [1833045],                               "model_line": "911",        "variant": "Turbo"},
     {"name": "992 Turbo",         "ids": [40033130],                              "model_line": "911",        "variant": "Turbo"},
     {"name": "911 SC",            "ids": [16982431],                              "model_line": "911",        "variant": "SC"},
@@ -86,7 +96,7 @@ VARIANT_PATTERNS = [
     "GT3 RS 4.0", "GT3 RS", "GT3",
     "GT2 RS", "GT2",
     "Turbo S", "Turbo",
-    "Carrera RS", "Carrera S", "Carrera GTS", "Carrera T", "Carrera",
+    "RS America", "Carrera RS", "Carrera S", "Carrera GTS", "Carrera T", "Carrera",
 ]
 
 WIDEBODY_VARIANTS = {"GT3 RS", "GT3 RS 4.0", "GT2", "GT2 RS", "Turbo", "Turbo S", "Turbo 3.3", "Turbo 3.0"}
@@ -201,6 +211,7 @@ def map_record(raw: dict, model_line: str, config_variant: str | None) -> dict |
         auction_url       = raw.get("url"),
         sold_date         = sold_date,
         lot_title         = title,
+        exterior_color    = parse_exterior_color(title),
         paint_to_sample   = parse_paint_to_sample(title),
         production_number = None,
     )
