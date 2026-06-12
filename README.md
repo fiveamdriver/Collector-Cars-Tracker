@@ -10,7 +10,7 @@ A full-stack web app that tracks collector car auction results and market prices
 ## Tech Stack
 - **Backend:** Python, FastAPI, SQLite, pandas
 - **Frontend:** React, Recharts
-- **Data:** Apify BaT scraper, OldCarsData API
+- **Data:** BaT internal API (reverse engineered via Chrome DevTools)
 - **Dev Environment:** macOS, VS Code, Claude Code CLI
 
 ## Project Structure
@@ -52,7 +52,7 @@ A full-stack web app that tracks collector car auction results and market prices
 - Built bat_ingest.py with rate limiting, URL-based duplicate prevention, and full pagination
 - Automated keyword_pages ID discovery via BaT autocomplete endpoint (bat_discover.py)
 - Ingested 18 Porsche model configs — 5,600+ real auction records
-- Set up OldCarsData API integration (ocd_ingest.py), free tier exhausted, resets July 10
+- OldCarsData API (ocd_ingest.py): integrated but pending — free tier exhausted, resets July 10
 - Fixed GT3 RS variant mapping (282 records), renamed 930 Turbo taxonomy, deleted all 350 mock seed records
 - Schema migration: replaced unused color column with thumbnail_url
 - Added seed.py --clear flag guard after accidental data wipes
