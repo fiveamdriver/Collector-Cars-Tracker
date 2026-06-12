@@ -9,7 +9,7 @@ import os
 import sqlite3
 
 BACKEND_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-DB_PATH     = os.path.join(BACKEND_DIR, "pcarmarket.db")
+DB_PATH     = "/Users/lance/pcarmarket-data/pcarmarket.db"
 
 
 def get_columns(cursor, table: str) -> list[str]:

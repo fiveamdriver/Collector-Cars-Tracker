@@ -2,7 +2,7 @@ from sqlalchemy import event
 from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker, AsyncSession
 from sqlalchemy.orm import DeclarativeBase
 
-DATABASE_URL = "sqlite+aiosqlite:///./pcarmarket.db"
+DATABASE_URL = "sqlite+aiosqlite:////Users/lance/pcarmarket-data/pcarmarket.db"
 
 engine = create_async_engine(DATABASE_URL, echo=False)
 

@@ -1,7 +1,7 @@
 from typing import Optional
 
 from fastapi import APIRouter, Depends, HTTPException, Query, status
-from sqlalchemy import select
+from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.database import get_db
@@ -14,6 +14,25 @@ from app.schemas.listing import (
 )
 
 router = APIRouter()
+
+
+# --- Stats ---
+
+@router.get("/stats/model-lines")
+async def model_line_stats(db: AsyncSession = Depends(get_db)):
+    q = (
+        select(
+            AuctionResult.model_line,
+            func.count().label("count"),
+            func.avg(AuctionResult.sold_price).label("avg_sold_price"),
+        )
+        .group_by(AuctionResult.model_line)
+    )
+    rows = (await db.execute(q)).all()
+    return [
+        {"model_line": r.model_line, "count": r.count, "avg_sold_price": round(r.avg_sold_price) if r.avg_sold_price else None}
+        for r in rows
+    ]
 
 
 # --- Auction Results ---

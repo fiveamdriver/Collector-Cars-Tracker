@@ -6,6 +6,11 @@ function fmtPrice(n) {
 function fmtMileage(n) {
   return n != null ? n.toLocaleString() : '—'
 }
+function fmtDate(s) {
+  if (!s) return '—'
+  const [y, m, d] = s.split('-').map(Number)
+  return new Date(y, m - 1, d).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+}
 function truncate(s, n) {
   return s && s.length > n ? s.slice(0, n) + '…' : (s ?? '—')
 }
@@ -28,8 +33,6 @@ export default function ResultsTable({ results }) {
     (a, b) => new Date(b.sold_date) - new Date(a.sold_date)
   )
 
-  const showTrans = !results.every(r => r.transmission === results[0]?.transmission)
-
   return (
     <>
     <div className="table-wrapper">
@@ -39,7 +42,6 @@ export default function ResultsTable({ results }) {
             <th>Date</th>
             <th>Year</th>
             <th>Listing</th>
-            {showTrans && <th>Trans</th>}
             <th>Photo</th>
             <th>Color</th>
             <th>Mileage</th>
@@ -50,10 +52,9 @@ export default function ResultsTable({ results }) {
         <tbody>
           {sorted.map((r, i) => (
             <tr key={r.id} className={i % 2 === 1 ? 'row-alt' : ''}>
-              <td>{r.sold_date}</td>
+              <td>{fmtDate(r.sold_date)}</td>
               <td>{r.year}</td>
               <td className="td-listing">{truncate(stripColor(stripYear(r.lot_title, r.mileage != null), r.exterior_color), 40)}</td>
-              {showTrans && <td className="td-trans">{r.transmission}</td>}
               <td className="td-photo">
                 {r.thumbnail_url
                   ? <img src={r.thumbnail_url} alt="" className="result-thumb result-thumb--clickable" onClick={() => setLightbox(r.thumbnail_url)} />

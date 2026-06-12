@@ -29,7 +29,7 @@ from app.utils.color_parser import parse_exterior_color
 from sqlalchemy import select, update
 from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
 
-DATABASE_URL = f"sqlite+aiosqlite:///{os.path.join(BACKEND_DIR, 'pcarmarket.db')}"
+DATABASE_URL = "sqlite+aiosqlite:////Users/lance/pcarmarket-data/pcarmarket.db"
 engine       = create_async_engine(DATABASE_URL)
 AsyncSession = async_sessionmaker(engine, expire_on_commit=False)
 
@@ -41,33 +41,76 @@ MAX_PAGES = None  # set to an integer to limit pages per config during test runs
 # ── Query configs ─────────────────────────────────────────────────────────────
 
 CONFIGS = [
+    # ── Multi-generation ──────────────────────────────────────────────────────
     {"name": "911 GT3/GT3 RS",    "ids": [2015688, 55778434, 55778221, 55778351], "model_line": "911",        "variant": None},
+    # ── F-Series ─────────────────────────────────────────────────────────────
+    {"name": "Carrera RS 2.7",    "ids": [68399612],                              "model_line": "911",        "variant": "Carrera RS 2.7"},
+    # ── G-Body ───────────────────────────────────────────────────────────────
+    {"name": "911 SC",            "ids": [16982431],                              "model_line": "911",        "variant": None},
+    {"name": "911 Carrera 3.2",   "ids": [1833037],                               "model_line": "911",        "variant": None},
+    {"name": "930 Turbo",         "ids": [1833042],                               "model_line": "911",        "variant": None},
+    {"name": "G-Body Speedster",  "ids": [18545334],                              "model_line": "911",        "variant": None},
+    {"name": "Carrera 2.7 MFI",  "ids": [47454972],                              "model_line": "911",        "variant": None},
+    # ── 964 ──────────────────────────────────────────────────────────────────
+    {"name": "964",               "ids": [1833038],                               "model_line": "911",        "variant": "Carrera 2"},
+    {"name": "964 Carrera RS",    "ids": [74679063],                              "model_line": "911",        "variant": "Carrera RS"},
+    {"name": "964 RS America",    "ids": [13042525],                              "model_line": "911",        "variant": "RS America"},
+    {"name": "964 Turbo",         "ids": [1833043],                               "model_line": "911",        "variant": None},
+    {"name": "964 Speedster",     "ids": [107034406],                             "model_line": "911",        "variant": "Speedster"},
+    {"name": "964 Singer",        "ids": [49009648],                              "model_line": "911",        "variant": "Singer"},
+    # ── 993 ──────────────────────────────────────────────────────────────────
     {"name": "993 Carrera",       "ids": [1833039],                               "model_line": "911",        "variant": "Carrera"},
     {"name": "993 Carrera 4",     "ids": [113028272],                             "model_line": "911",        "variant": "Carrera 4"},
     {"name": "993 Carrera 4S",    "ids": [113028394],                             "model_line": "911",        "variant": "Carrera 4S"},
     {"name": "993 Carrera S",     "ids": [113028363],                             "model_line": "911",        "variant": "Carrera S"},
     {"name": "993 Carrera RS",    "ids": [113029626],                             "model_line": "911",        "variant": "Carrera RS"},
-    {"name": "993 Turbo",         "ids": [1833044],                               "model_line": "911",        "variant": "Turbo"},
+    {"name": "993 Turbo",         "ids": [1833044],                               "model_line": "911",        "variant": None},
     {"name": "993 GT2",           "ids": [55777633],                              "model_line": "911",        "variant": "GT2"},
-    {"name": "964",               "ids": [1833038],                               "model_line": "911",        "variant": "Carrera 2"},
-    {"name": "964 Carrera RS",    "ids": [74679063],                              "model_line": "911",        "variant": "Carrera RS"},
-    {"name": "964 RS America",    "ids": [13042525],                              "model_line": "911",        "variant": "RS America"},
-    {"name": "964 Turbo",         "ids": [1833043],                               "model_line": "911",        "variant": "Turbo"},
-    {"name": "964 Speedster",     "ids": [107034406],                             "model_line": "911",        "variant": "Speedster"},
-    {"name": "964 Singer",        "ids": [49009648],                              "model_line": "911",        "variant": "Singer"},
+    # ── 996 ──────────────────────────────────────────────────────────────────
+    {"name": "996 Carrera",       "ids": [1833242],                               "model_line": "911",        "variant": "Carrera"},
+    {"name": "996 Turbo",         "ids": [1833045],                               "model_line": "911",        "variant": "Turbo"},
+    {"name": "996 GT2",           "ids": [55777735],                              "model_line": "911",        "variant": "GT2"},
+    # ── 997 ──────────────────────────────────────────────────────────────────
+    {"name": "997 Carrera",       "ids": [107031422],                             "model_line": "911",        "variant": "Carrera"},
+    {"name": "997 Carrera S",     "ids": [1833041],                               "model_line": "911",        "variant": "Carrera S"},
+    {"name": "997 Carrera GTS",   "ids": [107031793],                             "model_line": "911",        "variant": "Carrera GTS"},
+    {"name": "997 Turbo",         "ids": [2069776],                               "model_line": "911",        "variant": None},
+    {"name": "997 Sport Classic", "ids": [107031857],                             "model_line": "911",        "variant": "Sport Classic"},
+    {"name": "997 GT2",           "ids": [55777781],                              "model_line": "911",        "variant": None},
+    {"name": "997 Speedster",     "ids": [107032063],                             "model_line": "911",        "variant": "Speedster"},
+    # ── 991 ──────────────────────────────────────────────────────────────────
+    {"name": "991 Carrera",       "ids": [107019763],                             "model_line": "911",        "variant": "Carrera"},
+    {"name": "991 Carrera S",     "ids": [4247680],                               "model_line": "911",        "variant": "Carrera S"},
+    {"name": "991 Carrera T",     "ids": [107020080],                             "model_line": "911",        "variant": "Carrera T"},
+    {"name": "991 Carrera GTS",   "ids": [107020671],                             "model_line": "911",        "variant": "Carrera GTS"},
+    {"name": "991 Turbo",         "ids": [36019255],                              "model_line": "911",        "variant": None},
+    {"name": "991 GT2 RS",        "ids": [12792997],                              "model_line": "911",        "variant": None},
+    {"name": "991 R",             "ids": [107021997],                             "model_line": "911",        "variant": "R"},
+    {"name": "991 Speedster",     "ids": [107022050],                             "model_line": "911",        "variant": "Speedster"},
+    # ── 992 ──────────────────────────────────────────────────────────────────
+    {"name": "992 Carrera",       "ids": [107008946],                             "model_line": "911",        "variant": "Carrera"},
+    {"name": "992 Carrera S",     "ids": [40032430],                              "model_line": "911",        "variant": "Carrera S"},
+    {"name": "992 Carrera T",     "ids": [107009365],                             "model_line": "911",        "variant": "Carrera T"},
+    {"name": "992 Carrera GTS",   "ids": [107009458],                             "model_line": "911",        "variant": "Carrera GTS"},
+    {"name": "992 Turbo",         "ids": [40033130],                              "model_line": "911",        "variant": "Turbo"},
+    {"name": "992 Turbo S",       "ids": [40033138],                              "model_line": "911",        "variant": "Turbo S"},
+    {"name": "992 S/T",           "ids": [106842163],                             "model_line": "911",        "variant": "S/T"},
+    {"name": "992 Sport Classic", "ids": [106277777],                             "model_line": "911",        "variant": "Sport Classic"},
+    {"name": "992 Dakar",         "ids": [106526993],                             "model_line": "911",        "variant": "Dakar"},
+    # ── Cayman ───────────────────────────────────────────────────────────────
+    {"name": "987 Cayman",        "ids": [2662294],                               "model_line": "Cayman",     "variant": None},
+    {"name": "981 Cayman",        "ids": [45900428],                              "model_line": "Cayman",     "variant": None},
+    {"name": "718 Cayman",        "ids": [45900495],                              "model_line": "Cayman",     "variant": None},
+    {"name": "Cayman GT4",        "ids": [12819306],                              "model_line": "Cayman",     "variant": None},
+    # ── Boxster ──────────────────────────────────────────────────────────────
+    {"name": "986 Boxster",       "ids": [2014390],                               "model_line": "Boxster",    "variant": None},
+    {"name": "987 Boxster",       "ids": [44426381],                              "model_line": "Boxster",    "variant": None},
+    {"name": "981 Boxster",       "ids": [44426447],                              "model_line": "Boxster",    "variant": None},
+    {"name": "718 Boxster",       "ids": [44426756],                              "model_line": "Boxster",    "variant": None},
+    # ── Standalone models ─────────────────────────────────────────────────────
     {"name": "Carrera GT",        "ids": [38349021],                              "model_line": "Carrera GT", "variant": "base"},
     {"name": "959",               "ids": [39491899],                              "model_line": "959",        "variant": "base"},
     {"name": "918 Spyder",        "ids": [38553278],                              "model_line": "918 Spyder", "variant": None},
-    {"name": "991 R",             "ids": [107021997],                             "model_line": "911",        "variant": "R"},
-    {"name": "992 S/T",           "ids": [106842163],                             "model_line": "911",        "variant": "S/T"},
-    {"name": "997 Sport Classic", "ids": [107031857],                             "model_line": "911",        "variant": "Sport Classic"},
-    {"name": "991 Speedster",     "ids": [107022050],                             "model_line": "911",        "variant": "Speedster"},
-    {"name": "930 Turbo",         "ids": [1833042],                               "model_line": "911",        "variant": "930 Turbo"},
-    {"name": "996 Turbo",         "ids": [1833045],                               "model_line": "911",        "variant": "Turbo"},
-    {"name": "992 Turbo",         "ids": [40033130],                              "model_line": "911",        "variant": "Turbo"},
-    {"name": "911 SC",            "ids": [16982431],                              "model_line": "911",        "variant": "SC"},
-    {"name": "911 Carrera 3.2",   "ids": [1833037],                               "model_line": "911",        "variant": "Carrera 3.2"},
-    {"name": "Carrera RS 2.7",    "ids": [68399612],                              "model_line": "911",        "variant": "Carrera RS 2.7"},
 ]
 
 
@@ -75,7 +118,7 @@ CONFIGS = [
 
 def get_911_generation(year: int) -> str:
     if year <= 1973: return "F-Series"
-    if year <= 1989: return "G-Series"
+    if year <= 1989: return "G-Body"
     if year <= 1994: return "964"
     if year <= 1998: return "993"
     if year <= 2001: return "996.1"
@@ -85,6 +128,21 @@ def get_911_generation(year: int) -> str:
     if year <= 2016: return "991.1"
     if year <= 2019: return "991.2"
     return "992"
+
+
+def get_cayman_generation(year: int) -> str:
+    if year <= 2008: return "987.1"
+    if year <= 2012: return "987.2"
+    if year <= 2016: return "981"
+    return "718"
+
+
+def get_boxster_generation(year: int) -> str:
+    if year <= 2004: return "986"
+    if year <= 2008: return "987.1"
+    if year <= 2012: return "987.2"
+    if year <= 2016: return "981"
+    return "718"
 
 
 # ── Field parsers ─────────────────────────────────────────────────────────────
@@ -115,12 +173,50 @@ def parse_variant(title: str) -> str:
     return "base"
 
 
+CAYMAN_BOXSTER_PATTERNS = ["GT4 RS", "GT4", "GTS", "Spyder RS", "Spyder"]
+
+
+def parse_cayman_boxster_variant(title: str) -> str:
+    for pat in CAYMAN_BOXSTER_PATTERNS:
+        if pat in title:
+            return pat
+    if re.search(r'\bR\b', title):
+        return 'R'
+    if re.search(r'\bS\b', title):
+        return 'S'
+    return 'base'
+
+
+def parse_gbody_variant(title: str, year: int) -> str:
+    if 'Slant Nose' in title:
+        return 'Turbo 3.3 Slant Nose'
+    if 'MFI' in title:
+        return 'Carrera 2.7 MFI'
+    if 'Carrera 2.7' in title:
+        return 'Carrera 2.7'
+    if 'Carrera RS' in title:
+        return 'Carrera RS 3.0'
+    if 'Speedster' in title:
+        return 'Speedster'
+    if 'Turbo' in title:
+        return '930 Turbo'
+    if 'Carrera' in title and year <= 1977:
+        return 'Carrera 2.7'
+    if 'SC' in title:
+        return 'SC'
+    if 'Carrera 3.2' in title or ('Carrera' in title and year >= 1984):
+        return 'Carrera 3.2'
+    if '911S' in title or '911 S' in title:
+        return '911S'
+    return '911'
+
+
 def parse_transmission(title: str) -> str:
-    if any(k in title for k in ("6-Speed", "6-speed", "Manual")):
-        return "manual"
-    if any(k in title for k in ("PDK", "7-Speed")):
-        return "pdk"
-    return "manual"
+    if any(k in title for k in ("PDK", "7-Speed", "7-speed")):
+        return "PDK"
+    if any(k in title for k in ("6-Speed", "6-speed", "5-Speed", "5-speed", "Manual")):
+        return "Manual"
+    return "Manual"
 
 
 def parse_mileage(title: str) -> int | None:
@@ -144,6 +240,48 @@ def parse_paint_to_sample(title: str) -> bool | None:
 def compute_is_widebody(variant: str, model_line: str) -> bool:
     # Not stored in DB schema — computed here for future use / logging
     return variant in WIDEBODY_VARIANTS or model_line in WIDEBODY_MODELS
+
+
+# ── Autocomplete discovery ────────────────────────────────────────────────────
+
+AUTOCOMPLETE_URL = "https://bringatrailer.com/wp-json/bringatrailer/1.0/data/autocomplete"
+
+
+def discover_keyword_pages(term: str) -> list[dict]:
+    """
+    Hit BaT's autocomplete endpoint for a search term and return all matches.
+
+    Each match is a dict with at minimum 'id' and 'label' keys. The correct
+    keyword_pages ID for a given model is not always the first result — callers
+    should review all matches and pick the right one before adding to CONFIGS.
+
+    Returns an empty list if the request fails or no matches are found.
+    """
+    url = f"{AUTOCOMPLETE_URL}?{urllib.parse.urlencode({'term': term})}"
+    req = urllib.request.Request(url, headers={
+        "Accept":     "application/json",
+        "User-Agent": "Mozilla/5.0",
+    })
+    try:
+        with urllib.request.urlopen(req, timeout=15, context=SSL_CTX) as resp:
+            payload = json.loads(resp.read().decode())
+    except Exception as exc:
+        print(f"  autocomplete error for {term!r}: {exc}", file=sys.stderr)
+        return []
+
+    # Response: {"results": [{"title": "...", "destination": "<id>", "result_type": "item", ...}, ...]}
+    items = payload.get("results") if isinstance(payload, dict) else payload if isinstance(payload, list) else []
+
+    matches = []
+    for item in items:
+        if not isinstance(item, dict):
+            continue
+        id_ = item.get("destination")
+        label = item.get("title") or str(id_)
+        result_type = item.get("result_type", "")
+        if id_ is not None:
+            matches.append({"id": id_, "label": label, "result_type": result_type, "raw": item})
+    return matches
 
 
 # ── API fetch ─────────────────────────────────────────────────────────────────
@@ -186,8 +324,25 @@ def map_record(raw: dict, model_line: str, config_variant: str | None) -> dict |
     if not year:
         return None
 
-    variant      = config_variant if config_variant is not None else parse_variant(title)
-    generation   = get_911_generation(year) if model_line == "911" else model_line
+    if model_line == "911":
+        generation = get_911_generation(year)
+    elif model_line == "Cayman":
+        generation = get_cayman_generation(year)
+    elif model_line == "Boxster":
+        generation = get_boxster_generation(year)
+    else:
+        generation = model_line
+
+    if generation == '964' and 'RS America' in title:
+        variant = 'RS America'
+    elif config_variant is not None:
+        variant = config_variant
+    elif generation == 'G-Body':
+        variant = parse_gbody_variant(title, year)
+    elif model_line in ('Cayman', 'Boxster'):
+        variant = parse_cayman_boxster_variant(title)
+    else:
+        variant = parse_variant(title)
     transmission = parse_transmission(title)
 
     ts = raw.get("sold_text_timestamp")
@@ -219,7 +374,17 @@ def map_record(raw: dict, model_line: str, config_variant: str | None) -> dict |
 
 # ── Main ──────────────────────────────────────────────────────────────────────
 
-async def ingest() -> None:
+async def ingest(only: list[str] | None = None) -> None:
+    """
+    only: optional list of substrings; a config is run only if its name contains
+          at least one of them (case-insensitive). Pass None to run all configs.
+    """
+    configs = CONFIGS
+    if only:
+        patterns = [p.lower() for p in only]
+        configs = [c for c in CONFIGS if any(p in c["name"].lower() for p in patterns)]
+        print(f"Running {len(configs)}/{len(CONFIGS)} configs matching: {only}\n")
+
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
 
@@ -236,7 +401,7 @@ async def ingest() -> None:
     to_insert:  list[dict] = []
     to_backfill: list[tuple[str, str]] = []  # (auction_url, thumbnail_url)
 
-    for cfg in CONFIGS:
+    for cfg in configs:
         name        = cfg["name"]
         ids         = cfg["ids"]
         model_line  = cfg["model_line"]
@@ -306,4 +471,12 @@ async def ingest() -> None:
 
 
 if __name__ == "__main__":
-    asyncio.run(ingest())
+    import argparse
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "--only", metavar="PATTERN",
+        help="Comma-separated substrings; only run configs whose name contains one (e.g. '996,997,991,992')",
+    )
+    args = parser.parse_args()
+    only = [p.strip() for p in args.only.split(",")] if args.only else None
+    asyncio.run(ingest(only=only))

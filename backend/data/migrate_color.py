@@ -14,7 +14,7 @@ sys.path.insert(0, BACKEND_DIR)
 
 from app.utils.color_parser import parse_exterior_color
 
-DB_PATH = os.path.join(BACKEND_DIR, "pcarmarket.db")
+DB_PATH = "/Users/lance/pcarmarket-data/pcarmarket.db"
 
 
 def get_columns(cur, table: str) -> list[str]:

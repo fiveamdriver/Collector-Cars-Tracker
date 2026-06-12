@@ -8,7 +8,7 @@ import Sparkline from '../components/Sparkline'
 
 const GEN_IMAGES = {
   'F-Series': '/images/fseries.jpeg',
-  'G-Series': '/images/gbody.jpg',
+  'G-Body': '/images/gbody.jpg',
   '964':      '/images/964.jpeg',
   '993':      '/images/993.jpg',
   '996':      '/images/996.jpeg',

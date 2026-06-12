@@ -36,6 +36,14 @@ export default function VariantIndex() {
 
   const byVariant = useMemo(() => groupByField(results, 'variant'), [results])
 
+  const sortedVariants = useMemo(() => (
+    [...variants].sort((a, b) => {
+      const aAvg = calcStats(byVariant[a] ?? []).avg
+      const bAvg = calcStats(byVariant[b] ?? []).avg
+      return bAvg - aAvg
+    })
+  ), [variants, byVariant])
+
   if (!model) return <Navigate to="/" replace />
 
   const crumbs = [
@@ -61,7 +69,7 @@ export default function VariantIndex() {
 
       {!loading && !error && (
         <div className="card-grid">
-          {variants.map(variant => {
+          {sortedVariants.map(variant => {
             const varResults = byVariant[variant] ?? []
             const stats   = calcStats(varResults)
             const monthly = groupByMonth(varResults)

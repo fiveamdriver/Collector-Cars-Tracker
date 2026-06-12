@@ -4,7 +4,6 @@ function fmtPrice(n) {
 function fmtMileage(n) {
   return n != null ? n.toLocaleString() : '—'
 }
-
 export default function ActiveListingsPanel({ listings, loading, error }) {
   if (loading) return <p className="status">Loading…</p>
   if (error)   return <p className="status error">Error: {error}</p>
@@ -47,7 +46,6 @@ export default function ActiveListingsPanel({ listings, loading, error }) {
             <tr>
               <th>Year</th>
               <th>Variant</th>
-              <th>Trans</th>
               <th>Mileage</th>
               <th>Color</th>
               <th>Asking Price</th>
@@ -59,7 +57,6 @@ export default function ActiveListingsPanel({ listings, loading, error }) {
               <tr key={l.id} className={i % 2 === 1 ? 'row-alt' : ''}>
                 <td>{l.year}</td>
                 <td className="td-variant">{l.variant}</td>
-                <td className="td-trans">{l.transmission}</td>
                 <td>{fmtMileage(l.mileage)}</td>
                 <td>{l.color ?? '—'}</td>
                 <td className="price-cell">{fmtPrice(l.asking_price)}</td>

@@ -1,8 +1,7 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { ALL_MODELS, MODEL_LINE } from '../data/taxonomy'
-import { fetchAuctionResults } from '../api/client'
-import { calcStats, groupByField } from '../utils/aggregation'
+import { fetchModelLineStats } from '../api/client'
 import porscheCrest from '../assets/Porsche_Symbol_1.png'
 
 const MODEL_IMAGES = {
@@ -16,18 +15,21 @@ export default function MarketHome() {
   const series     = ALL_MODELS.filter(m => m.type === 'series')
   const standalone = ALL_MODELS.filter(m => m.type === 'standalone')
 
-  const [allResults, setAllResults] = useState([])
+  const [modelStats, setModelStats] = useState({})
 
   useEffect(() => {
-    fetchAuctionResults().then(setAllResults).catch(() => {})
+    fetchModelLineStats().then(rows => {
+      const byML = Object.fromEntries(rows.map(r => [r.model_line, r]))
+      setModelStats(
+        Object.fromEntries(
+          ALL_MODELS.map(m => [
+            m.slug,
+            { count: byML[MODEL_LINE[m.slug]]?.count ?? 0, avg: byML[MODEL_LINE[m.slug]]?.avg_sold_price ?? 0 },
+          ])
+        )
+      )
+    }).catch(() => {})
   }, [])
-
-  const modelStats = useMemo(() => {
-    const byML = groupByField(allResults, 'model_line')
-    return Object.fromEntries(
-      ALL_MODELS.map(m => [m.slug, calcStats(byML[MODEL_LINE[m.slug]] ?? [])])
-    )
-  }, [allResults])
 
   return (
     <div className="inner">

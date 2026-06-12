@@ -20,7 +20,7 @@ from app.models.listing import AuctionResult
 from sqlalchemy import delete
 from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
 
-DATABASE_URL = f"sqlite+aiosqlite:///{os.path.join(BACKEND_DIR, 'pcarmarket.db')}"
+DATABASE_URL = "sqlite+aiosqlite:////Users/lance/pcarmarket-data/pcarmarket.db"
 engine        = create_async_engine(DATABASE_URL)
 AsyncSession  = async_sessionmaker(engine, expire_on_commit=False)
 
@@ -64,7 +64,7 @@ VARIANT_DATA: dict[str, dict[str, list]] = {
             V('Carrera RS 2.7 Lightweight', 1,  800_000, 2_500_000, 'manual', 2),
             V('S/T',                        1,  300_000,   800_000, 'manual', 2),
         ],
-        'G-Series': [
+        'G-Body': [
             V('Carrera 2.7',          5,  50_000,  120_000, 'manual', None, 1974, 1977),
             V('911S',                 4,  40_000,   90_000, 'manual', None, 1974, 1977),
             V('Carrera RS 3.0',       2, 200_000,  500_000, 'manual',    3, 1975, 1977),
@@ -233,7 +233,7 @@ VARIANT_DATA: dict[str, dict[str, list]] = {
 # Generation selection weights (higher = more records)
 GEN_WEIGHTS = {
     '911': {
-        'F-Series': 5, 'G-Series': 8,
+        'F-Series': 5, 'G-Body': 8,
         '964': 9, '993': 10, '996.1': 6, '996.2': 8,
         '997.1': 12, '997.2': 13, '991.1': 13, '991.2': 14, '992': 15,
     },
@@ -247,7 +247,7 @@ GEN_WEIGHTS = {
 MODEL_WEIGHTS = {'911': 55, 'Cayman': 28, 'Boxster': 17, '959': 5, 'Carrera GT': 5, '918 Spyder': 5}
 
 YEAR_RANGES = {
-    'F-Series': (1964, 1973), 'G-Series': (1974, 1989),
+    'F-Series': (1964, 1973), 'G-Body': (1974, 1989),
     '964':   (1989, 1994), '993':   (1994, 1998),
     '996.1': (1998, 2001), '996.2': (2002, 2005),
     '997.1': (2005, 2008), '997.2': (2009, 2012),
@@ -260,7 +260,7 @@ YEAR_RANGES = {
 }
 
 MILEAGE_RANGES = {
-    'F-Series': (20_000, 180_000), 'G-Series': (30_000, 160_000),
+    'F-Series': (20_000, 180_000), 'G-Body': (30_000, 160_000),
     '964':   (15_000, 120_000), '993':   (12_000, 100_000),
     '996.1': (25_000, 128_000), '996.2': (22_000, 118_000),
     '997.1': (10_000,  88_000), '997.2': ( 8_000,  78_000),
@@ -388,8 +388,7 @@ async def seed(n: int = 350):
         session.add_all([AuctionResult(**r) for r in records])
         await session.commit()
 
-    db_path = os.path.join(BACKEND_DIR, 'pcarmarket.db')
-    print(f'Inserted {len(records)} auction results → {db_path}')
+    print(f'Inserted {len(records)} auction results → /Users/lance/pcarmarket-data/pcarmarket.db')
     await engine.dispose()
 
 

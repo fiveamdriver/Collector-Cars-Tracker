@@ -10,6 +10,11 @@ export async function fetchAuctionResults(params = {}) {
   return data
 }
 
+export async function fetchModelLineStats() {
+  const { data } = await api.get('/stats/model-lines')
+  return data
+}
+
 export async function fetchActiveListings(params = {}) {
   const clean = Object.fromEntries(
     Object.entries(params).filter(([, v]) => v != null && v !== '')

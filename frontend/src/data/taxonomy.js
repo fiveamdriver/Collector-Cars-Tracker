@@ -24,11 +24,17 @@ export const GENERATION_GROUPS = {
     '997': ['997.1', '997.2'],
     '991': ['991.1', '991.2'],
   },
+  'cayman': {
+    '987': ['987.1', '987.2'],
+  },
+  'boxster': {
+    '987': ['987.1', '987.2'],
+  },
 }
 
 // Top-level generation list shown on GenerationIndex (groups collapsed to one entry)
 export const GENERATIONS = {
-  '911':    ['F-Series', 'G-Series', '964', '993', '996', '997', '991', '992'],
+  '911':    ['F-Series', 'G-Body', '964', '993', '996', '997', '991', '992'],
   'cayman': ['987', '981', '718'],
   'boxster': ['986', '987', '981', '718'],
 }
@@ -39,9 +45,9 @@ export const VARIANTS = {
       '911', '911S', '911T', '911E', '911L', '911R',
       'Carrera RS 2.7', 'Carrera RS 2.7 Lightweight', 'S/T',
     ],
-    'G-Series': [
-      'Carrera 2.7', '911S', 'Carrera RS 3.0', 'SC', 'Carrera 3.2',
-      'Turbo 3.0', '930 Turbo', 'Turbo 3.3 Slant Nose', 'Turbo S', 'Speedster',
+    'G-Body': [
+      'Speedster', 'Turbo 3.3 Slant Nose', '930 Turbo',
+      'Carrera 2.7 MFI', 'Carrera 2.7', 'Carrera 3.2', 'SC', '911S', '911',
     ],
     '964': [
       'Carrera', 'Carrera RS', 'RS America',
@@ -55,12 +61,12 @@ export const VARIANTS = {
     '996.2': ['Carrera', 'Carrera S', 'Turbo', 'Turbo S', 'GT3', 'GT3 RS', 'GT2'],
     '997.1': [
       'Carrera', 'Carrera S',
-      'Turbo', 'GT3', 'GT3 RS', 'GT2', 'Sport Classic',
+      'Turbo', 'GT3', 'GT3 RS', 'GT2',
     ],
     '997.2': [
       'Carrera', 'Carrera S', 'Carrera GTS',
       'Turbo', 'Turbo S',
-      'GT3', 'GT3 RS', 'GT3 RS 4.0', 'GT2 RS', 'Speedster',
+      'GT3', 'GT3 RS', 'GT3 RS 4.0', 'GT2 RS', 'Sport Classic', 'Speedster',
     ],
     '991.1': [
       'Carrera', 'Carrera S', 'Carrera T', 'Carrera GTS',
@@ -79,14 +85,16 @@ export const VARIANTS = {
     ],
   },
   'cayman': {
-    '987': ['base', 'S', 'R', 'GTS'],
+    '987.1': ['base', 'S'],
+    '987.2': ['base', 'S', 'R'],
     '981': ['base', 'S', 'GTS', 'GT4'],
     '718': ['base', 'S', 'GTS', 'GT4', 'GT4 RS'],
   },
   'boxster': {
     '986': ['base', 'S'],
-    '987': ['base', 'S', 'Spyder', 'GTS'],
+    '987.1': ['base', 'S'],
+    '987.2': ['base', 'S', 'Spyder', 'GTS'],
     '981': ['base', 'S', 'GTS', 'Spyder'],
-    '718': ['base', 'S', 'GTS', 'Spyder', 'RS Spyder'],
+    '718': ['base', 'S', 'GTS', 'Spyder', 'Spyder RS'],
   },
 }
