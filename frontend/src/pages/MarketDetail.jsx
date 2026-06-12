@@ -1,11 +1,12 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useParams, Navigate } from 'react-router-dom'
-import { ALL_MODELS, GENERATION_GROUPS, MODEL_LINE, VARIANTS } from '../data/taxonomy'
+import { ALL_MODELS, GENERATION_GROUPS, MODEL_LINE, VARIANTS, VARIANT_HERO, MODEL_HERO } from '../data/taxonomy'
 import { fetchAuctionResults, fetchActiveListings } from '../api/client'
 import { calcStats, groupByMonth } from '../utils/aggregation'
 import { fromSlug } from '../utils/slugs'
 import Breadcrumb from '../components/Breadcrumb'
 import StatsBar from '../components/StatsBar'
+import VariantHero from '../components/VariantHero'
 import PriceHistoryChart from '../components/PriceHistoryChart'
 import ResultsTable from '../components/ResultsTable'
 import ActiveListingsPanel from '../components/ActiveListingsPanel'
@@ -75,6 +76,22 @@ export default function MarketDetail() {
 
   if (!model) return <Navigate to="/" replace />
 
+  // Show the hero panel on terminal pages: a specific variant, or a standalone model
+  const showHero = variant !== null || model.type === 'standalone'
+  const heroImage = variant
+    ? (VARIANT_HERO[modelSlug]?.[generation]?.[variant] ?? null)
+    : (MODEL_HERO[modelSlug] ?? null)
+
+  // Eyebrow: "Porsche 911 · 993" or "Porsche 959" etc.
+  const eyebrow = generation
+    ? `Porsche ${model.label} · ${generation}`
+    : `Porsche ${model.label}`
+
+  // Hero title: "993 GT2", "F-Series 911R", or standalone model name
+  const heroTitle = variant
+    ? `${generation} ${variant}`
+    : model.label
+
   const crumbs = [{ label: 'Markets', to: '/' }]
   if (model.type === 'series') {
     crumbs.push({ label: model.label, to: `/${modelSlug}` })
@@ -93,7 +110,7 @@ export default function MarketDetail() {
     <div className="inner">
       <div className="page-header">
         <Breadcrumb crumbs={crumbs} />
-        <h1 className="page-title">{title}</h1>
+        {!showHero && <h1 className="page-title">{title}</h1>}
       </div>
 
       <div className="tabs">
@@ -117,7 +134,9 @@ export default function MarketDetail() {
           {error   && <p className="status error">Error: {error}</p>}
           {!loading && !error && (
             <>
-              <StatsBar {...stats} />
+              {showHero
+                ? <VariantHero eyebrow={eyebrow} title={heroTitle} stats={stats} heroImage={heroImage} />
+                : <StatsBar {...stats} />}
               {monthlyData.length >= 2 && (
                 <PriceHistoryChart monthlyData={monthlyData} />
               )}

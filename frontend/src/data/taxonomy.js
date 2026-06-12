@@ -98,3 +98,34 @@ export const VARIANTS = {
     '718': ['base', 'S', 'GTS', 'Spyder', 'Spyder RS'],
   },
 }
+
+// Hero image filename (served from /images/variants/) for each variant.
+// All variants within a generation share the same photo for now; add a
+// more-specific key to override an individual variant later.
+const _h = (variants, img) => Object.fromEntries(variants.map(v => [v, img]))
+
+export const VARIANT_HERO = {
+  '911': {
+    'F-Series': _h(VARIANTS['911']['F-Series'], 'fseries.jpeg'),
+    'G-Body':   _h(VARIANTS['911']['G-Body'],   'gbody.jpg'),
+    '964':      _h(VARIANTS['911']['964'],       '964.jpeg'),
+    '993':      _h(VARIANTS['911']['993'],       '993.jpg'),
+    '996.1':    _h(VARIANTS['911']['996.1'],     '996.jpeg'),
+    '996.2':    _h(VARIANTS['911']['996.2'],     '996.jpeg'),
+    '997.1':    _h(VARIANTS['911']['997.1'],     '997.jpg'),
+    '997.2':    _h(VARIANTS['911']['997.2'],     '997.jpg'),
+    '991.1':    _h(VARIANTS['911']['991.1'],     '991.jpeg'),
+    '991.2':    _h(VARIANTS['911']['991.2'],     '991.jpeg'),
+    '992':      _h(VARIANTS['911']['992'],       '992.jpeg'),
+  },
+  // Cayman and Boxster: no generation-specific photos yet; add filenames to unlock
+  'cayman':  {},
+  'boxster':  {},
+}
+
+// Hero image for standalone models (no generation/variant hierarchy)
+export const MODEL_HERO = {
+  '959':        '959.jpg',
+  'carrera-gt': 'carrera-gt.jpeg',
+  '918-spyder': '918.jpeg',
+}
