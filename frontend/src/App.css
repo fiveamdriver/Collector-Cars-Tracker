@@ -429,6 +429,24 @@ button { font-family: inherit; cursor: pointer; }
   .variant-hero-right { min-height: 180px; }
 }
 
+/* ── Generation parallax photo ───────────────────────── */
+.gen-parallax-hero {
+  position: relative;
+  margin: -28px -32px 0;
+  height: 100vh;
+  background-attachment: fixed;
+  background-size: cover;
+  background-position: center;
+}
+
+.gen-parallax-hero::after {
+  content: '';
+  position: absolute;
+  inset: 50% 0 0 0;
+  background: linear-gradient(to bottom, transparent, #0f0f0f);
+  pointer-events: none;
+}
+
 /* ── Generation hero ─────────────────────────────────── */
 .gen-hero {
   display: flex;
