@@ -15,14 +15,9 @@ BACKEND_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, BACKEND_DIR)
 
 import app.models  # noqa: F401
-from app.database import Base
+from app.database import AsyncSessionLocal, Base, engine
 from app.models.listing import AuctionResult
 from sqlalchemy import delete
-from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
-
-DATABASE_URL = "sqlite+aiosqlite:////Users/lance/pcarmarket-data/pcarmarket.db"
-engine        = create_async_engine(DATABASE_URL)
-AsyncSession  = async_sessionmaker(engine, expire_on_commit=False)
 
 # ---------------------------------------------------------------------------
 # Variant definitions
@@ -370,7 +365,7 @@ async def seed(n: int = 350):
         await conn.run_sync(Base.metadata.create_all)
 
     if '--clear' in sys.argv:
-        async with AsyncSession() as session:
+        async with AsyncSessionLocal() as session:
             await session.execute(delete(AuctionResult))
             await session.commit()
         print('Cleared existing auction_results.')
@@ -384,11 +379,12 @@ async def seed(n: int = 350):
         if rec:
             records.append(rec)
 
-    async with AsyncSession() as session:
+    async with AsyncSessionLocal() as session:
         session.add_all([AuctionResult(**r) for r in records])
         await session.commit()
 
-    print(f'Inserted {len(records)} auction results → /Users/lance/pcarmarket-data/pcarmarket.db')
+    from app.config import DATABASE_PATH
+    print(f'Inserted {len(records)} auction results → {DATABASE_PATH}')
     await engine.dispose()
 
 

@@ -22,14 +22,10 @@ BACKEND_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, BACKEND_DIR)
 
 import app.models  # noqa: F401
-from app.database import Base
+from app.config import DATABASE_PATH
+from app.database import AsyncSessionLocal, Base, engine
 from app.models.listing import AuctionResult
 from sqlalchemy import select
-from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
-
-DATABASE_URL = f"sqlite+aiosqlite:///{os.path.join(BACKEND_DIR, 'pcarmarket.db')}"
-engine       = create_async_engine(DATABASE_URL)
-AsyncSession = async_sessionmaker(engine, expire_on_commit=False)
 
 API_BASE = "https://api.oldcarsdata.com"   # adjust if the base URL differs
 API_KEY  = os.environ.get("OCD_API_KEY")
@@ -52,14 +48,13 @@ def get_911_generation(year: int) -> str:
 # ── Transmission normalizer ──────────────────────────────────────────────────
 
 def normalize_transmission(value: str | None) -> str:
+    """Normalize a raw transmission string to one of the two canonical DB values."""
     if not value:
-        return "manual"
-    v = value.lower()
-    if "manual" in v:
-        return "manual"
-    if any(k in v for k in ("pdk", "doppelkupplung", "automatic")):
-        return "pdk"
-    return "manual"   # default — Porsche GT cars are manual
+        return "Manual"
+    lower = value.lower()
+    if any(k in lower for k in ("pdk", "doppelkupplung", "automatic")):
+        return "PDK"
+    return "Manual"
 
 
 # ── Variant extractor ────────────────────────────────────────────────────────
@@ -199,7 +194,7 @@ async def ingest() -> None:
         await conn.run_sync(Base.metadata.create_all)
 
     # Load existing auction URLs so we can skip duplicates without a schema change
-    async with AsyncSession() as session:
+    async with AsyncSessionLocal() as session:
         rows = await session.execute(
             select(AuctionResult.auction_url).where(
                 AuctionResult.auction_url.isnot(None)
@@ -243,7 +238,7 @@ async def ingest() -> None:
         print(f"  → {batch_inserted} queued, {batch_skipped} skipped")
 
     if to_insert:
-        async with AsyncSession() as session:
+        async with AsyncSessionLocal() as session:
             session.add_all([AuctionResult(**r) for r in to_insert])
             await session.commit()
         total_inserted = len(to_insert)

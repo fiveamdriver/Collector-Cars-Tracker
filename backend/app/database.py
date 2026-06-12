@@ -1,8 +1,8 @@
 from sqlalchemy import event
-from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker, AsyncSession
+from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 from sqlalchemy.orm import DeclarativeBase
 
-DATABASE_URL = "sqlite+aiosqlite:////Users/lance/pcarmarket-data/pcarmarket.db"
+from app.config import DATABASE_URL
 
 engine = create_async_engine(DATABASE_URL, echo=False)
 
@@ -13,6 +13,8 @@ def _set_sqlite_pragmas(dbapi_conn, _):
     cursor.execute("PRAGMA journal_mode=WAL")
     cursor.execute("PRAGMA busy_timeout=5000")
     cursor.close()
+
+
 AsyncSessionLocal = async_sessionmaker(engine, expire_on_commit=False)
 
 
@@ -25,6 +27,6 @@ async def get_db() -> AsyncSession:
         yield session
 
 
-async def init_db():
+async def init_db() -> None:
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)

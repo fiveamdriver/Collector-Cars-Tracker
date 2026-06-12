@@ -1,7 +1,10 @@
 from datetime import date, datetime
-from typing import Optional
+from typing import Literal, Optional
 
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, field_validator
+
+# Valid transmission values stored in the database.
+TransmissionType = Literal["PDK", "Manual"]
 
 
 class AuctionResultCreate(BaseModel):
@@ -10,7 +13,8 @@ class AuctionResultCreate(BaseModel):
     generation: str
     variant: str
     year: int
-    transmission: str
+    transmission: TransmissionType
+    is_widebody: Optional[bool] = None
     mileage: Optional[int] = None
     thumbnail_url: Optional[str] = None
     sold_price: int
@@ -21,6 +25,27 @@ class AuctionResultCreate(BaseModel):
     exterior_color: Optional[str] = None
     paint_to_sample: Optional[bool] = None
     production_number: Optional[str] = None
+
+    @field_validator("year")
+    @classmethod
+    def validate_year(cls, value: int) -> int:
+        if not 1950 <= value <= 2030:
+            raise ValueError(f"year {value} is outside the valid range 1950–2030")
+        return value
+
+    @field_validator("sold_price")
+    @classmethod
+    def validate_sold_price(cls, value: int) -> int:
+        if value <= 0:
+            raise ValueError("sold_price must be a positive integer")
+        return value
+
+    @field_validator("mileage")
+    @classmethod
+    def validate_mileage(cls, value: Optional[int]) -> Optional[int]:
+        if value is not None and value < 0:
+            raise ValueError("mileage cannot be negative")
+        return value
 
 
 class AuctionResultRead(AuctionResultCreate):
@@ -36,7 +61,7 @@ class ActiveListingCreate(BaseModel):
     generation: Optional[str] = None
     variant: Optional[str] = None
     year: int
-    transmission: Optional[str] = None
+    transmission: Optional[TransmissionType] = None
     mileage: Optional[int] = None
     color: Optional[str] = None
     asking_price: Optional[int] = None
@@ -45,6 +70,13 @@ class ActiveListingCreate(BaseModel):
     listed_date: Optional[date] = None
     paint_to_sample: Optional[bool] = None
     production_number: Optional[str] = None
+
+    @field_validator("year")
+    @classmethod
+    def validate_year(cls, value: int) -> int:
+        if not 1950 <= value <= 2030:
+            raise ValueError(f"year {value} is outside the valid range 1950–2030")
+        return value
 
 
 class ActiveListingRead(ActiveListingCreate):

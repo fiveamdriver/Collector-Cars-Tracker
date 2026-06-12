@@ -28,7 +28,7 @@ export default function MarketHome() {
           ])
         )
       )
-    }).catch(() => {})
+    }).catch(err => console.error('Failed to load model line stats:', err))
   }, [])
 
   return (

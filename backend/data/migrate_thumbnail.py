@@ -7,9 +7,14 @@ Usage (from backend/ directory):
 """
 import os
 import sqlite3
+import sys
 
 BACKEND_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-DB_PATH     = "/Users/lance/pcarmarket-data/pcarmarket.db"
+sys.path.insert(0, BACKEND_DIR)
+
+from app.config import DATABASE_PATH  # noqa: E402
+
+DB_PATH = DATABASE_PATH
 
 
 def get_columns(cursor, table: str) -> list[str]:

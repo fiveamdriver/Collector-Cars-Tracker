@@ -12,9 +12,10 @@ import sys
 BACKEND_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, BACKEND_DIR)
 
+from app.config import DATABASE_PATH
 from app.utils.color_parser import parse_exterior_color
 
-DB_PATH = "/Users/lance/pcarmarket-data/pcarmarket.db"
+DB_PATH = DATABASE_PATH
 
 
 def get_columns(cur, table: str) -> list[str]:

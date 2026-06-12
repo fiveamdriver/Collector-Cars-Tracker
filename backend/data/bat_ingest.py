@@ -23,15 +23,11 @@ BACKEND_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, BACKEND_DIR)
 
 import app.models  # noqa: F401
-from app.database import Base
+from app.config import DATABASE_PATH
+from app.database import AsyncSessionLocal, Base, engine
 from app.models.listing import AuctionResult
 from app.utils.color_parser import parse_exterior_color
 from sqlalchemy import select, update
-from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
-
-DATABASE_URL = "sqlite+aiosqlite:////Users/lance/pcarmarket-data/pcarmarket.db"
-engine       = create_async_engine(DATABASE_URL)
-AsyncSession = async_sessionmaker(engine, expire_on_commit=False)
 
 API_URL   = "https://bringatrailer.com/wp-json/bringatrailer/1.0/data/listings-filter"
 SSL_CTX   = ssl.create_default_context(cafile=certifi.where())
@@ -167,6 +163,13 @@ def parse_year(title: str) -> int | None:
 
 
 def parse_variant(title: str) -> str:
+    """
+    Extract the 911 variant from a BaT lot title using longest-match priority.
+
+    VARIANT_PATTERNS is ordered most-specific to least-specific so that
+    "GT3 RS 4.0" is matched before "GT3 RS" and "GT3 RS" before "GT3".
+    Returns "base" when no pattern matches (i.e. a stock Carrera).
+    """
     for pat in VARIANT_PATTERNS:
         if pat in title:
             return pat
@@ -177,6 +180,14 @@ CAYMAN_BOXSTER_PATTERNS = ["GT4 RS", "GT4", "GTS", "Spyder RS", "Spyder"]
 
 
 def parse_cayman_boxster_variant(title: str) -> str:
+    """
+    Extract the Cayman/Boxster variant from a BaT lot title.
+
+    Named patterns (GT4 RS, GT4, GTS, Spyder RS, Spyder) are checked first.
+    Then word-boundary checks for the single-letter variants R and S, which
+    must be whole words to avoid false matches against other abbreviations.
+    Returns "base" for an unspecced car.
+    """
     for pat in CAYMAN_BOXSTER_PATTERNS:
         if pat in title:
             return pat
@@ -188,6 +199,18 @@ def parse_cayman_boxster_variant(title: str) -> str:
 
 
 def parse_gbody_variant(title: str, year: int) -> str:
+    """
+    Extract the G-Body 911 variant from a BaT lot title and production year.
+
+    Priority chain runs most-specific to least-specific:
+      Slant Nose (modified Turbo) → MFI → Carrera 2.7 → Carrera RS →
+      Speedster → Turbo (930) → early Carrera (≤1977) → SC → Carrera 3.2 →
+      911S → base 911
+
+    Year is used to disambiguate "Carrera" titles, since both the early
+    Carrera 2.7 (1972–1977) and the Carrera 3.2 (1984–1989) appear in
+    G-Body production years.
+    """
     if 'Slant Nose' in title:
         return 'Turbo 3.3 Slant Nose'
     if 'MFI' in title:
@@ -212,6 +235,14 @@ def parse_gbody_variant(title: str, year: int) -> str:
 
 
 def parse_transmission(title: str) -> str:
+    """
+    Infer transmission type from the lot title.
+
+    BaT titles consistently include speed/type tokens when the transmission
+    is notable (e.g. "7-Speed PDK", "6-Speed Manual").  PDK is always 7-speed;
+    manual cars are 5- or 6-speed depending on generation.  Defaults to Manual
+    because the majority of historic Porsches sold on BaT are manual.
+    """
     if any(k in title for k in ("PDK", "7-Speed", "7-speed")):
         return "PDK"
     if any(k in title for k in ("6-Speed", "6-speed", "5-Speed", "5-speed", "Manual")):
@@ -287,6 +318,12 @@ def discover_keyword_pages(term: str) -> list[dict]:
 # ── API fetch ─────────────────────────────────────────────────────────────────
 
 def fetch_page(ids: list[int], page: int) -> list[dict]:
+    """
+    Fetch one page of auction listings from BaT's internal listings-filter API.
+
+    Returns the raw item list from the response, or an empty list if no items
+    were returned.  The caller is responsible for catching network exceptions.
+    """
     params = [
         ("page",                     page),
         ("per_page",                 24),
@@ -311,6 +348,15 @@ def fetch_page(ids: list[int], page: int) -> list[dict]:
 # ── Record mapper ─────────────────────────────────────────────────────────────
 
 def map_record(raw: dict, model_line: str, config_variant: str | None) -> dict | None:
+    """
+    Map a raw BaT API item to an auction_results row dict.
+
+    Returns None for unsold lots (auctions that ended without a sale) and for
+    items missing a year or price.  config_variant overrides title-parsed
+    variants for configs where the variant is unambiguous (e.g. "964 RS America").
+    Generation-specific parsers (G-Body, Cayman/Boxster) are selected before
+    the generic 911 parse_variant fallback.
+    """
     sold_text = raw.get("sold_text") or ""
     if not sold_text.startswith("Sold for"):
         return None
@@ -389,7 +435,7 @@ async def ingest(only: list[str] | None = None) -> None:
         await conn.run_sync(Base.metadata.create_all)
 
     # Load existing records: url → thumbnail_url (None means no thumbnail yet)
-    async with AsyncSession() as session:
+    async with AsyncSessionLocal() as session:
         rows = await session.execute(
             select(AuctionResult.auction_url, AuctionResult.thumbnail_url).where(
                 AuctionResult.auction_url.isnot(None)
@@ -450,7 +496,7 @@ async def ingest(only: list[str] | None = None) -> None:
         print(f"  fetched: {cfg_fetched} | queued: {cfg_queued} | backfilled: {cfg_updated} | skipped: {cfg_skipped}")
         time.sleep(5)
 
-    async with AsyncSession() as session:
+    async with AsyncSessionLocal() as session:
         if to_insert:
             session.add_all([AuctionResult(**r) for r in to_insert])
         for url, thumb in to_backfill:
@@ -461,12 +507,11 @@ async def ingest(only: list[str] | None = None) -> None:
             )
         await session.commit()
 
-    db_path = os.path.join(BACKEND_DIR, "pcarmarket.db")
     print(
         f"\nTotal — fetched: {total_fetched} | inserted: {len(to_insert)} | "
         f"backfilled: {len(to_backfill)} | skipped: {total_skipped}"
     )
-    print(f"Database: {db_path}")
+    print(f"Database: {DATABASE_PATH}")
     await engine.dispose()
 
 
