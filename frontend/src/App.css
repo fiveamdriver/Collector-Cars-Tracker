@@ -400,6 +400,85 @@ thead th {
   background: var(--bg-elevated);
 }
 
+.th-ctrl {
+  cursor: pointer;
+  user-select: none;
+  white-space: nowrap;
+}
+
+.th-ctrl:hover { color: #666; }
+
+.th-ctrl--active { color: var(--accent) !important; }
+
+.th-ctrl--open { color: #888 !important; }
+
+.th-ctrl-inner {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.th-sort-arrow {
+  font-size: 9px;
+  color: var(--accent);
+  line-height: 1;
+}
+
+.th-filter-tag {
+  color: var(--accent);
+  font-variant-numeric: tabular-nums;
+}
+
+.th-chevron {
+  font-size: 8px;
+  color: #333;
+  margin-left: 1px;
+  line-height: 1;
+}
+
+.th-ctrl:hover .th-chevron { color: #555; }
+.th-ctrl--open .th-chevron { color: #555; }
+
+.th-dropdown {
+  position: fixed;
+  z-index: 200;
+  background: #161616;
+  border: 1px solid #242424;
+  border-radius: 5px;
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.6);
+  min-width: 130px;
+  max-height: 280px;
+  overflow-y: auto;
+  padding: 4px 0;
+}
+
+.th-drop-item {
+  display: block;
+  width: 100%;
+  background: none;
+  border: none;
+  color: #888;
+  font-size: 12px;
+  font-family: inherit;
+  font-weight: 600;
+  text-align: left;
+  padding: 7px 14px;
+  cursor: pointer;
+  letter-spacing: 0.02em;
+  transition: color 0.1s, background 0.1s;
+}
+
+.th-drop-item:hover { background: #1e1e1e; color: #ccc; }
+
+.th-drop-item--on {
+  color: var(--accent);
+}
+
+.th-drop-item--on::before {
+  content: '✓ ';
+  font-size: 10px;
+}
+
 tbody tr {
   border-bottom: 1px solid #141414;
   transition: background 0.1s;
@@ -420,9 +499,9 @@ tbody td {
 .td-photo    { padding-top: 6px; padding-bottom: 6px; }
 .result-thumb {
   display: block;
-  width: 80px;
+  width: 100%;
   height: 54px;
-  object-fit: cover;
+  object-fit: contain;
   border-radius: 4px;
 }
 .result-thumb--clickable {
