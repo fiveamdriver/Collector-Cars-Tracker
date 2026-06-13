@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { Link, useParams, Navigate } from 'react-router-dom'
 import { ALL_MODELS, GENERATION_GROUPS, MODEL_LINE, GENERATION_HERO } from '../data/taxonomy'
 import { fetchAuctionResults } from '../api/client'
@@ -49,10 +49,60 @@ export default function SubGenerationIndex() {
   const monthlyData = useMemo(() => groupByMonth(results), [results])
   const heroImg   = GENERATION_HERO[modelSlug]?.[seg1] ?? null
 
+  const heroRef    = useRef(null)
+  const contentRef = useRef(null)
+
+  useEffect(() => {
+    const hero    = heroRef.current
+    const content = contentRef.current
+    if (!hero || !content) return
+    const onScroll = () => {
+      const H      = hero.offsetHeight
+      const belowH = document.body.scrollHeight - H
+      const maxY   = document.body.scrollHeight - window.innerHeight
+      const T      = maxY * 0.5
+      const y      = window.scrollY
+
+      if (y <= 0 || y >= maxY) {
+        content.style.transform = ''
+        return
+      }
+
+      let extra
+      if (y <= T) {
+        const t = y / T
+        extra = t * 60
+      } else {
+        const t     = (y - T) / T
+        const lag   = 60 * (1 - t)
+        const surge = -200 * 6.75 * t * (1 - t) * (1 - t)
+        extra = lag + surge
+      }
+
+      const floor = y - belowH
+      if (extra < floor) extra = floor
+
+      content.style.transform = `translateY(${extra}px)`
+    }
+    window.addEventListener('scroll', onScroll, { passive: true })
+    return () => {
+      window.removeEventListener('scroll', onScroll)
+      if (content) content.style.transform = ''
+    }
+  }, [])
+
   if (!model) return <Navigate to="/" replace />
 
   return (
-    <div className="inner">
+    <>
+      {heroImg && (
+        <div
+          ref={heroRef}
+          className="gen-parallax-hero"
+          style={{ backgroundImage: `url(${heroImg})` }}
+        />
+      )}
+      <div ref={contentRef} className="inner">
       <div className="page-header">
         <Breadcrumb crumbs={[
           { label: 'Markets',   to: '/' },
@@ -124,5 +174,6 @@ export default function SubGenerationIndex() {
         </div>
       )}
     </div>
+    </>
   )
 }

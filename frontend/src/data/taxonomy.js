@@ -112,18 +112,32 @@ const _h = (variants, img) => Object.fromEntries(variants.map(v => [v, img]))
 
 export const VARIANT_HERO = {
   '911': {
-    'F-Body': _h(VARIANTS['911']['F-Body'], 'fseries.jpeg'),
-    'G-Body':   _h(VARIANTS['911']['G-Body'],   'gbody.jpg'),
-    '964':      _h(VARIANTS['911']['964'],       '964.jpeg'),
-    '993':      _h(VARIANTS['911']['993'],       '993.jpg'),
-    '996.1':    _h(VARIANTS['911']['996.1'],     '996.jpeg'),
-    '996.2':    _h(VARIANTS['911']['996.2'],     '996.jpeg'),
-    '997.1':    _h(VARIANTS['911']['997.1'],     '997.jpg'),
-    '997.2':    _h(VARIANTS['911']['997.2'],     '997.jpg'),
-    '991.1':    _h(VARIANTS['911']['991.1'],     '991.jpeg'),
-    '991.2':    _h(VARIANTS['911']['991.2'],     '991.jpeg'),
-    '992.1':    _h(VARIANTS['911']['992.1'],     '992.jpeg'),
-    '992.2':    _h(VARIANTS['911']['992.2'],     '992.jpeg'),
+    'F-Body':  _h(VARIANTS['911']['F-Body'],  null),
+    'G-Body':  _h(VARIANTS['911']['G-Body'],  null),
+    '964':     _h(VARIANTS['911']['964'],     null),
+    '993': {
+      ..._h(VARIANTS['911']['993'],  null),
+      'Carrera RS': '911_993_rs.jpg',
+      'Turbo':      '911_993_turbo.jpg',
+      'Turbo S':    '911_993_turbo.jpg',
+    },
+    '996.1':   _h(VARIANTS['911']['996.1'],  null),
+    '996.2':   _h(VARIANTS['911']['996.2'],  null),
+    '997.1': {
+      ..._h(VARIANTS['911']['997.1'], null),
+      'GT3':    '911_997-1_gt3.jpg',
+      'GT3 RS': '911_997-1_gt3rs.jpg',
+      'GT2':    '911_997-2_gt2.jpg',
+    },
+    '997.2': {
+      ..._h(VARIANTS['911']['997.2'], null),
+      'GT3 RS': '911_997-2_gt3rs.jpg',
+      'GT2 RS': '911_997-2_gt2rs.jpg',
+    },
+    '991.1':   _h(VARIANTS['911']['991.1'],  null),
+    '991.2':   _h(VARIANTS['911']['991.2'],  null),
+    '992.1':   _h(VARIANTS['911']['992.1'],  null),
+    '992.2':   _h(VARIANTS['911']['992.2'],  null),
   },
   // Cayman and Boxster: no generation-specific photos yet; add filenames to unlock
   'cayman':  {},
@@ -132,9 +146,9 @@ export const VARIANT_HERO = {
 
 // Hero image for standalone models (no generation/variant hierarchy)
 export const MODEL_HERO = {
-  '959':        '959.jpg',
-  'carrera-gt': 'carrera-gt.jpeg',
-  '918-spyder': '918.jpeg',
+  '959':        null,
+  'carrera-gt': null,
+  '918-spyder': null,
 }
 
 // Hero image for generation-level pages (VariantIndex).
@@ -146,14 +160,14 @@ export const GENERATION_HERO = {
     '964':      '/images/964.jpeg',
     '993':      '/images/993.jpg',
     '996':      '/images/996.jpeg',
-    '996.1':    '/images/996.jpeg',
-    '996.2':    '/images/996.jpeg',
+    '996.1':    null,
+    '996.2':    null,
     '997':      '/images/997.jpg',
-    '997.1':    '/images/997.jpg',
-    '997.2':    '/images/997.jpg',
+    '997.1':    null,
+    '997.2':    null,
     '991':      '/images/991.jpeg',
-    '991.1':    '/images/991.jpeg',
-    '991.2':    '/images/991.jpeg',
+    '991.1':    null,
+    '991.2':    null,
     '992':      '/images/992.jpeg',
     '992.1':    '/images/992.jpeg',
     '992.2':    '/images/992.jpeg',

@@ -6,7 +6,7 @@ export default function VariantHero({ eyebrow, title, description, stats, heroIm
   const { avg } = stats
 
   return (
-    <div className="variant-hero">
+    <div className={`variant-hero${heroImage ? ' variant-hero--photo' : ''}`}>
       <div className="variant-hero-left">
         <div className="variant-hero-text">
           {eyebrow && <div className="variant-hero-eyebrow">{eyebrow}</div>}
